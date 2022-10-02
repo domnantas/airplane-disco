@@ -17,7 +17,7 @@ onMounted(() => {
       name: 'globe'
     }
   });
-  map.on('style.load', () => {
+  map.on('load', () => {
     map.setFog({}); // Set the default atmosphere style
   });
 })

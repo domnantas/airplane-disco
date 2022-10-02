@@ -4,7 +4,7 @@
 
 ## Development
 
-This project uses Vue 3, Typescript and Vite
+This project uses [Vue 3](https://vuejs.org/), [Typescript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/), and [UnoCSS](https://github.com/unocss/unocss)
 
 ```sh
 # Install dependencies
