@@ -1,31 +1,44 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
+import 'mapbox-gl/dist/mapbox-gl.css';
+import mapboxgl from 'mapbox-gl';
+import { onMounted, ref } from 'vue';
+
+const mapContainer = ref<HTMLElement | null>(null)
+
+onMounted(() => {
+  mapboxgl.accessToken = 'pk.eyJ1IjoiZmlzdG1lbmFydXRvIiwiYSI6ImNsOHJtZzlrZTBucXAzbm4xeDQ1N29lbXcifQ.5DrUh4lgXkHcv6x3hyyTjw';
+  console.log(mapContainer.value)
+  const map = new mapboxgl.Map({
+    container: mapContainer.value!,
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [25.2, 54.7],
+    zoom: 3,
+    projection: {
+      name: 'globe'
+    }
+  });
+  map.on('style.load', () => {
+    map.setFog({}); // Set the default atmosphere style
+  });
+})
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <div ref="mapContainer" class="map-container"></div>
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
+.map-container {
+  width: 100%;
+  height: 100%;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+</style>
+
+<style>
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
 }
 </style>
