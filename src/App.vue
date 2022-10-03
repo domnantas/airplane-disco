@@ -48,6 +48,7 @@ onMounted(() => {
 				"icon-image": "airport-15",
 				"icon-allow-overlap": true,
 				"icon-rotate": ["get", "trueTrack"],
+				"icon-rotation-alignment": "map",
 			},
 		});
 	});
