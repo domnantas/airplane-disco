@@ -29,7 +29,9 @@ onMounted(() => {
 		const flightsCollection = featureCollection(
 			flights.states
 				.filter((flight: any) => flight[5] && flight[6])
-				.map((flight: any) => point([flight[5], flight[6]]))
+				.map((flight: any) =>
+					point([flight[5], flight[6]], { trueTrack: flight[10] })
+				)
 		);
 
 		map.addSource("flights", {
@@ -45,6 +47,7 @@ onMounted(() => {
 			layout: {
 				"icon-image": "airport-15",
 				"icon-allow-overlap": true,
+				"icon-rotate": ["get", "trueTrack"],
 			},
 		});
 	});
