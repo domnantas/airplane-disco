@@ -2,13 +2,13 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
 import { onMounted, ref } from "vue";
+import { featureCollection, point } from "@turf/turf";
 
 const mapContainer = ref<HTMLElement | null>(null);
 
 onMounted(() => {
 	mapboxgl.accessToken =
 		"pk.eyJ1IjoiZmlzdG1lbmFydXRvIiwiYSI6ImNsOHJtZzlrZTBucXAzbm4xeDQ1N29lbXcifQ.5DrUh4lgXkHcv6x3hyyTjw";
-	console.log(mapContainer.value);
 	const map = new mapboxgl.Map({
 		container: mapContainer.value!,
 		style: "mapbox://styles/mapbox/streets-v11",
@@ -18,8 +18,35 @@ onMounted(() => {
 			name: "globe",
 		},
 	});
-	map.on("load", () => {
+
+	map.on("load", async () => {
 		map.setFog({}); // Set the default atmosphere style
+
+		const flights = await fetch(
+			"https://opensky-network.org/api/states/all"
+		).then((response) => response.json());
+
+		const flightsCollection = featureCollection(
+			flights.states
+				.filter((flight: any) => flight[5] && flight[6])
+				.map((flight: any) => point([flight[5], flight[6]]))
+		);
+
+		map.addSource("flights", {
+			type: "geojson",
+			// @ts-ignore
+			data: flightsCollection,
+		});
+
+		map.addLayer({
+			id: "flights",
+			type: "symbol",
+			source: "flights",
+			layout: {
+				"icon-image": "airport-15",
+				"icon-allow-overlap": true,
+			},
+		});
 	});
 });
 </script>
