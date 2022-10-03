@@ -3,6 +3,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
 import { onMounted, ref } from "vue";
 import { featureCollection, point } from "@turf/turf";
+import type { FeatureCollection } from "geojson";
 
 const mapContainer = ref<HTMLElement | null>(null);
 
@@ -26,17 +27,19 @@ onMounted(() => {
 			"https://opensky-network.org/api/states/all"
 		).then((response) => response.json());
 
-		const flightsCollection = featureCollection(
+		const flightsCollection: FeatureCollection = featureCollection(
 			flights.states
 				.filter((flight: any) => flight[5] && flight[6])
 				.map((flight: any) =>
-					point([flight[5], flight[6]], { trueTrack: flight[10] })
+					point([flight[5], flight[6]], {
+						velocity: flight[9],
+						trueTrack: flight[10],
+					})
 				)
 		);
 
 		map.addSource("flights", {
 			type: "geojson",
-			// @ts-ignore
 			data: flightsCollection,
 		});
 
@@ -51,6 +54,34 @@ onMounted(() => {
 				"icon-rotation-alignment": "map",
 			},
 		});
+
+		// setInterval(() => {
+		// 	flightsCollection = featureCollection(
+		// 		featureReduce(
+		// 			// @ts-ignore
+		// 			flightsCollection,
+		// 			(updatedFeatures, currentFeature) => {
+		// 				const velocityKilometersPerSecond =
+		// 					(currentFeature.properties?.velocity || 0) / 1000;
+		// 				const bearing = currentFeature.properties?.trueTrack || 0;
+
+		// 				const movedFeature = destination(
+		// 					getCoords(currentFeature),
+		// 					velocityKilometersPerSecond,
+		// 					bearing,
+		// 					{ properties: currentFeature.properties }
+		// 				);
+		// 				return [...updatedFeatures, movedFeature];
+		// 			},
+		// 			[]
+		// 		)
+		// 	);
+
+		// 	map
+		// 		.getSource("flights")
+		// 		// @ts-ignore
+		// 		.setData(flightsCollection);
+		// }, 1000);
 	});
 });
 </script>
