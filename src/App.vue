@@ -5,9 +5,63 @@ import { onMounted, ref } from "vue";
 import { featureCollection, point } from "@turf/turf";
 import type { FeatureCollection } from "geojson";
 
+interface AirplaneServerResponse {
+	ac: Airplane[];
+	ctime: number;
+	msg: string;
+	now: number;
+	ptime: number;
+	total: number;
+}
+
+interface Airplane {
+	alt_baro: number;
+	alt_geom: number;
+	baro_rate: number;
+	category: string;
+	dir: number;
+	dst: number;
+	geom_rate: number;
+	gs: number;
+	lat: number;
+	lon: number;
+	seen: number;
+	seen_pos: number;
+	track: number;
+	track_rate: number;
+	type: string;
+}
+
 const mapContainer = ref<HTMLElement | null>(null);
 
-onMounted(() => {
+const getAirplanes = (
+	latitude: number,
+	longitude: number
+): Promise<AirplaneServerResponse> => {
+	const airplaneServerUrl = new URL(import.meta.env.VITE_AIRPLANE_SERVER_URL);
+	airplaneServerUrl.searchParams.set("latitude", latitude.toString());
+	airplaneServerUrl.searchParams.set("longitude", longitude.toString());
+
+	return fetch(airplaneServerUrl.href).then((response) => response.json());
+};
+
+const getAirplaneCollection = async (
+	latitude: number,
+	longitude: number
+): Promise<FeatureCollection> => {
+	const airplanes = await getAirplanes(latitude, longitude);
+	return featureCollection(
+		airplanes.ac.map((airplane: Airplane) => {
+			return point([airplane.lon, airplane.lat], {
+				altitude: airplane.alt_geom,
+				groundSpeed: airplane.gs,
+				track: airplane.track,
+			});
+		})
+	);
+};
+
+onMounted(async () => {
 	mapboxgl.accessToken =
 		"pk.eyJ1IjoiZmlzdG1lbmFydXRvIiwiYSI6ImNsOHJtZzlrZTBucXAzbm4xeDQ1N29lbXcifQ.5DrUh4lgXkHcv6x3hyyTjw";
 	const map = new mapboxgl.Map({
@@ -23,65 +77,39 @@ onMounted(() => {
 	map.on("load", async () => {
 		map.setFog({}); // Set the default atmosphere style
 
-		const flights = await fetch(
-			"https://opensky-network.org/api/states/all"
-		).then((response) => response.json());
-
-		const flightsCollection: FeatureCollection = featureCollection(
-			flights.states
-				.filter((flight: any) => flight[5] && flight[6])
-				.map((flight: any) =>
-					point([flight[5], flight[6]], {
-						velocity: flight[9],
-						trueTrack: flight[10],
-					})
-				)
+		const center = map.getCenter();
+		const airplaneCollection = await getAirplaneCollection(
+			center.lat,
+			center.lng
 		);
 
-		map.addSource("flights", {
+		map.addSource("airplanes", {
 			type: "geojson",
-			data: flightsCollection,
+			data: airplaneCollection,
 		});
 
 		map.addLayer({
-			id: "flights",
+			id: "airplanes",
 			type: "symbol",
-			source: "flights",
+			source: "airplanes",
 			layout: {
 				"icon-image": "airport-15",
 				"icon-allow-overlap": true,
-				"icon-rotate": ["get", "trueTrack"],
+				"icon-rotate": ["get", "track"],
 				"icon-rotation-alignment": "map",
 			},
 		});
+	});
 
-		// setInterval(() => {
-		// 	flightsCollection = featureCollection(
-		// 		featureReduce(
-		// 			// @ts-ignore
-		// 			flightsCollection,
-		// 			(updatedFeatures, currentFeature) => {
-		// 				const velocityKilometersPerSecond =
-		// 					(currentFeature.properties?.velocity || 0) / 1000;
-		// 				const bearing = currentFeature.properties?.trueTrack || 0;
+	map.on("moveend", async () => {
+		const center = map.getCenter();
+		const airplaneCollection = await getAirplaneCollection(
+			center.lat,
+			center.lng
+		);
 
-		// 				const movedFeature = destination(
-		// 					getCoords(currentFeature),
-		// 					velocityKilometersPerSecond,
-		// 					bearing,
-		// 					{ properties: currentFeature.properties }
-		// 				);
-		// 				return [...updatedFeatures, movedFeature];
-		// 			},
-		// 			[]
-		// 		)
-		// 	);
-
-		// 	map
-		// 		.getSource("flights")
-		// 		// @ts-ignore
-		// 		.setData(flightsCollection);
-		// }, 1000);
+		const airplaneSource = map.getSource("airplanes") as mapboxgl.GeoJSONSource;
+		airplaneSource.setData(airplaneCollection);
 	});
 });
 </script>
