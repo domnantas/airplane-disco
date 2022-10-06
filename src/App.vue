@@ -5,16 +5,16 @@ import { onMounted, ref } from "vue";
 import { featureCollection, point } from "@turf/turf";
 import type { FeatureCollection } from "geojson";
 
-interface AirplaneServerResponse {
+type AirplaneServerResponse = {
 	ac: Airplane[];
 	ctime: number;
 	msg: string;
 	now: number;
 	ptime: number;
 	total: number;
-}
+};
 
-interface Airplane {
+type Airplane = {
 	alt_baro: number;
 	alt_geom: number;
 	baro_rate: number;
@@ -30,7 +30,7 @@ interface Airplane {
 	track: number;
 	track_rate: number;
 	type: string;
-}
+};
 
 const mapContainer = ref<HTMLElement | null>(null);
 
@@ -38,7 +38,10 @@ const getAirplanes = (
 	latitude: number,
 	longitude: number
 ): Promise<AirplaneServerResponse> => {
-	const airplaneServerUrl = new URL(import.meta.env.VITE_AIRPLANE_SERVER_URL);
+	const airplaneServerUrl = new URL(
+		"/airplanes",
+		import.meta.env.VITE_AIRPLANE_PROXY_URL
+	);
 	airplaneServerUrl.searchParams.set("latitude", latitude.toString());
 	airplaneServerUrl.searchParams.set("longitude", longitude.toString());
 

@@ -9,3 +9,9 @@
 *.njsproj
 *.sln
 *.sw?
+
+node_modules
+dist
+dist-ssr
+*.local
+.dev.vars
