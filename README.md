@@ -5,7 +5,7 @@
 Here's how Airplane Scatter works:
 ![Amateur radio operator unable to contact another operator due to curvature of the Earth. However, they are able to establish a contact by bouncing off radio waves on an airplan overflying between them](how-airplane-scatter-works.png)
 
-This project uses [Vue 3](https://vuejs.org/), [Typescript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/), and [UnoCSS](https://github.com/unocss/unocss).In order to proxy API requests it uses [Cloudflare Pages Functions](https://developers.cloudflare.com/pages/platform/functions/). Deployed on [Cloudflare Pages](https://pages.cloudflare.com/).
+This project uses [Vue 3](https://vuejs.org/), [Typescript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/), and [UnoCSS](https://github.com/unocss/unocss). In order to proxy API requests it uses [Cloudflare Pages Functions](https://developers.cloudflare.com/pages/platform/functions/). Deployed on [Cloudflare Pages](https://pages.cloudflare.com/).
 
 ## Development
 
