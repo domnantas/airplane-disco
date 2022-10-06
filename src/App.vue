@@ -38,10 +38,7 @@ const getAirplanes = (
 	latitude: number,
 	longitude: number
 ): Promise<AirplaneServerResponse> => {
-	const airplaneServerUrl = new URL(
-		"/airplanes",
-		import.meta.env.VITE_AIRPLANE_PROXY_URL
-	);
+	const airplaneServerUrl = new URL(import.meta.env.VITE_AIRPLANE_PROXY_URL);
 	airplaneServerUrl.searchParams.set("latitude", latitude.toString());
 	airplaneServerUrl.searchParams.set("longitude", longitude.toString());
 
