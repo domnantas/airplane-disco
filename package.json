@@ -10,10 +10,12 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@kidonng/daisyui": "^2.31.0",
     "@turf/turf": "^6.5.0",
     "@types/mapbox-gl": "^2.7.6",
     "@unocss/reset": "^0.45.26",
     "mapbox-gl": "^2.10.0",
+    "unocss-preset-daisy": "^1.2.0",
     "vue": "^3.2.37"
   },
   "devDependencies": {
