@@ -5,6 +5,7 @@ import { onMounted, ref } from "vue";
 import {
 	circle,
 	featureCollection,
+	getCoord,
 	greatCircle,
 	midpoint,
 	point,
@@ -107,17 +108,6 @@ onMounted(async () => {
 		});
 	});
 
-	// map.on("moveend", async () => {
-	// 	const center = map.getCenter();
-	// 	const airplaneCollection = await getAirplaneCollection(
-	// 		center.lat,
-	// 		center.lng
-	// 	);
-
-	// 	const airplaneSource = map.getSource("airplanes") as mapboxgl.GeoJSONSource;
-	// 	airplaneSource.setData(airplaneCollection);
-	// });
-
 	const receiverMarker = new Marker({
 		draggable: true,
 		color: "red",
@@ -130,7 +120,7 @@ onMounted(async () => {
 	map.once("click", (event) => {
 		transmitterMarker.setLngLat(event.lngLat).addTo(map);
 
-		map.once("click", (event) => {
+		map.once("click", async (event) => {
 			receiverMarker.setLngLat(event.lngLat).addTo(map);
 
 			map.addSource("path", {
@@ -151,15 +141,14 @@ onMounted(async () => {
 				},
 			});
 
+			const pathMidpoint = midpoint(
+				transmitterMarker.getLngLat().toArray(),
+				receiverMarker.getLngLat().toArray()
+			);
+
 			map.addSource("midpoint", {
 				type: "geojson",
-				data: circle(
-					midpoint(
-						transmitterMarker.getLngLat().toArray(),
-						receiverMarker.getLngLat().toArray()
-					),
-					20
-				),
+				data: circle(pathMidpoint, 20),
 			});
 
 			map.addLayer({
@@ -171,6 +160,14 @@ onMounted(async () => {
 					"fill-opacity": 0.5,
 				},
 			});
+
+			const airplaneCollection = await getAirplaneCollection(
+				getCoord(pathMidpoint)[1],
+				getCoord(pathMidpoint)[0]
+			);
+
+			const airplaneSource = map.getSource("airplanes") as GeoJSONSource;
+			airplaneSource.setData(airplaneCollection);
 
 			transmitterMarker.on("drag", () => {
 				const pathSource = map.getSource("path") as GeoJSONSource;
@@ -212,6 +209,36 @@ onMounted(async () => {
 						20
 					)
 				);
+			});
+
+			transmitterMarker.on("dragend", async () => {
+				const pathMidpoint = midpoint(
+					transmitterMarker.getLngLat().toArray(),
+					receiverMarker.getLngLat().toArray()
+				);
+
+				const airplaneCollection = await getAirplaneCollection(
+					getCoord(pathMidpoint)[1],
+					getCoord(pathMidpoint)[0]
+				);
+
+				const airplaneSource = map.getSource("airplanes") as GeoJSONSource;
+				airplaneSource.setData(airplaneCollection);
+			});
+
+			receiverMarker.on("dragend", async () => {
+				const pathMidpoint = midpoint(
+					transmitterMarker.getLngLat().toArray(),
+					receiverMarker.getLngLat().toArray()
+				);
+
+				const airplaneCollection = await getAirplaneCollection(
+					getCoord(pathMidpoint)[1],
+					getCoord(pathMidpoint)[0]
+				);
+
+				const airplaneSource = map.getSource("airplanes") as GeoJSONSource;
+				airplaneSource.setData(airplaneCollection);
 			});
 		});
 	});
