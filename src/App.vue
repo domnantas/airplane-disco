@@ -2,7 +2,7 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
 import { onMounted, ref } from "vue";
-import { featureCollection, point } from "@turf/turf";
+import { featureCollection, lineString, point } from "@turf/turf";
 import type { FeatureCollection } from "geojson";
 
 type AirplaneServerResponse = {
@@ -101,15 +101,49 @@ onMounted(async () => {
 		});
 	});
 
-	map.on("moveend", async () => {
-		const center = map.getCenter();
-		const airplaneCollection = await getAirplaneCollection(
-			center.lat,
-			center.lng
-		);
+	// map.on("moveend", async () => {
+	// 	const center = map.getCenter();
+	// 	const airplaneCollection = await getAirplaneCollection(
+	// 		center.lat,
+	// 		center.lng
+	// 	);
 
-		const airplaneSource = map.getSource("airplanes") as mapboxgl.GeoJSONSource;
-		airplaneSource.setData(airplaneCollection);
+	// 	const airplaneSource = map.getSource("airplanes") as mapboxgl.GeoJSONSource;
+	// 	airplaneSource.setData(airplaneCollection);
+	// });
+
+	const transmitterMarker = new mapboxgl.Marker({
+		draggable: true,
+	});
+	const receiverMarker = new mapboxgl.Marker({
+		draggable: true,
+		color: "red",
+	});
+
+	map.once("click", (event) => {
+		transmitterMarker.setLngLat(event.lngLat).addTo(map);
+
+		map.once("click", (event) => {
+			receiverMarker.setLngLat(event.lngLat).addTo(map);
+
+			map.addSource("line", {
+				type: "geojson",
+				data: lineString([
+					transmitterMarker.getLngLat().toArray(),
+					receiverMarker.getLngLat().toArray(),
+				]),
+			});
+
+			map.addLayer({
+				id: "line",
+				type: "line",
+				source: "line",
+				paint: {
+					"line-color": "#333",
+					"line-width": 2,
+				},
+			});
+		});
 	});
 });
 </script>
