@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import "mapbox-gl/dist/mapbox-gl.css";
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { Marker, GeoJSONSource } from "mapbox-gl";
 import { onMounted, ref } from "vue";
-import { featureCollection, lineString, point } from "@turf/turf";
+import {
+	circle,
+	featureCollection,
+	greatCircle,
+	midpoint,
+	point,
+} from "@turf/turf";
 import type { FeatureCollection } from "geojson";
 
 type AirplaneServerResponse = {
@@ -112,12 +118,13 @@ onMounted(async () => {
 	// 	airplaneSource.setData(airplaneCollection);
 	// });
 
-	const transmitterMarker = new mapboxgl.Marker({
-		draggable: true,
-	});
-	const receiverMarker = new mapboxgl.Marker({
+	const receiverMarker = new Marker({
 		draggable: true,
 		color: "red",
+	});
+
+	const transmitterMarker = new Marker({
+		draggable: true,
 	});
 
 	map.once("click", (event) => {
@@ -126,22 +133,85 @@ onMounted(async () => {
 		map.once("click", (event) => {
 			receiverMarker.setLngLat(event.lngLat).addTo(map);
 
-			map.addSource("line", {
+			map.addSource("path", {
 				type: "geojson",
-				data: lineString([
+				data: greatCircle(
 					transmitterMarker.getLngLat().toArray(),
-					receiverMarker.getLngLat().toArray(),
-				]),
+					receiverMarker.getLngLat().toArray()
+				),
 			});
 
 			map.addLayer({
-				id: "line",
+				id: "path",
 				type: "line",
-				source: "line",
+				source: "path",
 				paint: {
 					"line-color": "#333",
 					"line-width": 2,
 				},
+			});
+
+			map.addSource("midpoint", {
+				type: "geojson",
+				data: circle(
+					midpoint(
+						transmitterMarker.getLngLat().toArray(),
+						receiverMarker.getLngLat().toArray()
+					),
+					20
+				),
+			});
+
+			map.addLayer({
+				id: "midpoint",
+				type: "fill",
+				source: "midpoint",
+				paint: {
+					"fill-color": "red",
+					"fill-opacity": 0.5,
+				},
+			});
+
+			transmitterMarker.on("drag", () => {
+				const pathSource = map.getSource("path") as GeoJSONSource;
+				pathSource.setData(
+					greatCircle(
+						transmitterMarker.getLngLat().toArray(),
+						receiverMarker.getLngLat().toArray()
+					)
+				);
+
+				const midpointSource = map.getSource("midpoint") as GeoJSONSource;
+				midpointSource.setData(
+					circle(
+						midpoint(
+							transmitterMarker.getLngLat().toArray(),
+							receiverMarker.getLngLat().toArray()
+						),
+						20
+					)
+				);
+			});
+
+			receiverMarker.on("drag", () => {
+				const pathSource = map.getSource("path") as GeoJSONSource;
+				pathSource.setData(
+					greatCircle(
+						transmitterMarker.getLngLat().toArray(),
+						receiverMarker.getLngLat().toArray()
+					)
+				);
+
+				const midpointSource = map.getSource("midpoint") as GeoJSONSource;
+				midpointSource.setData(
+					circle(
+						midpoint(
+							transmitterMarker.getLngLat().toArray(),
+							receiverMarker.getLngLat().toArray()
+						),
+						20
+					)
+				);
 			});
 		});
 	});
