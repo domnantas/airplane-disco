@@ -240,6 +240,16 @@ onMounted(async () => {
 				const airplaneSource = map.getSource("airplanes") as GeoJSONSource;
 				airplaneSource.setData(airplaneCollection);
 			});
+
+			setInterval(async () => {
+				const airplaneCollection = await getAirplaneCollection(
+					getCoord(pathMidpoint)[1],
+					getCoord(pathMidpoint)[0]
+				);
+
+				const airplaneSource = map.getSource("airplanes") as GeoJSONSource;
+				airplaneSource.setData(airplaneCollection);
+			}, 10000);
 		});
 	});
 });
