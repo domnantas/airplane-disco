@@ -257,8 +257,10 @@ onMounted(async () => {
 
 <template>
 	<div ref="mapContainer" class="w-full h-full"></div>
-	<div class="card w-72 bg-base-300 text-primary-content absolute top-4 left-4">
-		<div class="card-body">
+	<div
+		class="card bg-base-300 text-primary-content text-center absolute inset-x-4 top-4 md:w-72 md:left-4 md:text-left"
+	>
+		<div class="card-body items-center md:items-start">
 			<h2 class="card-title">My station</h2>
 			<h3 class="text-lg">Position</h3>
 			<input type="text" class="input w-full max-w-xs" />
