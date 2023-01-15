@@ -257,6 +257,25 @@ onMounted(async () => {
 
 <template>
 	<div ref="mapContainer" class="w-full h-full"></div>
+	<div class="card w-72 bg-base-300 text-primary-content absolute top-4 left-4">
+		<div class="card-body">
+			<h2 class="card-title">My station</h2>
+			<h3 class="text-lg">Position</h3>
+			<input type="text" class="input w-full max-w-xs" />
+			<h3 class="text-lg">Elevation</h3>
+			<p>-</p>
+			<div class="divider" />
+			<h2 class="card-title">DX station</h2>
+			<h3 class="text-lg">Position</h3>
+			<input type="text" class="input w-full max-w-xs" />
+			<h3 class="text-lg">Elevation</h3>
+			<p>-</p>
+			<h3 class="text-lg">Bearing</h3>
+			<p>-</p>
+			<h3 class="text-lg">Distance</h3>
+			<p>-</p>
+		</div>
+	</div>
 </template>
 
 <style>
