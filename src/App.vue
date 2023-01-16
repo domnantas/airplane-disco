@@ -261,7 +261,7 @@ const stationsDrawerIsOpen = ref(false);
 	<div ref="mapContainer" class="w-full h-full"></div>
 
 	<div
-		class="z-10 fixed w-9/12 max-w-sm top-4 bottom-4 left-0 bg-white border-r border-gray-200 rounded-r-lg dark:border-gray-700 dark:bg-gray-800 transition-transform p-4"
+		class="z-10 fixed w-9/12 max-w-xs top-4 bottom-4 left-0 bg-white border-r border-gray-200 rounded-r-lg dark:border-gray-700 dark:bg-gray-800 transition-transform p-4"
 		:class="{
 			'-translate-x-full': !stationsDrawerIsOpen,
 		}"
@@ -278,7 +278,7 @@ const stationsDrawerIsOpen = ref(false);
 				Stations
 			</p>
 		</button>
-		<h2 class="mb-4 text-4xl font-bold text-gray-900 dark:text-white">
+		<h2 class="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
 			My station
 		</h2>
 		<label
@@ -293,8 +293,10 @@ const stationsDrawerIsOpen = ref(false);
 			placeholder="XXYYzz..."
 			required
 		/>
+
 		<hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-		<h2 class="mb-4 text-4xl font-bold text-gray-900 dark:text-white">
+
+		<h2 class="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
 			DX Station
 		</h2>
 		<label
