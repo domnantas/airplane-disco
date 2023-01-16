@@ -7,7 +7,7 @@ calculator
 
 This project uses [Vue 3](https://vuejs.org/),
 [Typescript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/), and
-[UnoCSS](https://github.com/unocss/unocss). In order to proxy API requests it
+[Tailwind](https://tailwindcss.com/). In order to proxy API requests it
 uses
 [Cloudflare Pages Functions](https://developers.cloudflare.com/pages/platform/functions/).
 Deployed on [Cloudflare Pages](https://pages.cloudflare.com/).

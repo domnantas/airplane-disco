@@ -253,30 +253,62 @@ onMounted(async () => {
 		});
 	});
 });
+
+const stationsDrawerIsOpen = ref(false);
 </script>
 
 <template>
 	<div ref="mapContainer" class="w-full h-full"></div>
+
 	<div
-		class="card bg-base-300 text-primary-content text-center absolute inset-x-4 top-4 md:w-72 md:left-4 md:text-left"
+		class="z-10 fixed w-9/12 max-w-sm top-4 bottom-4 left-0 bg-white border-r border-gray-200 rounded-r-lg dark:border-gray-700 dark:bg-gray-800 transition-transform p-4"
+		:class="{
+			'-translate-x-full': !stationsDrawerIsOpen,
+		}"
 	>
-		<div class="card-body items-center md:items-start">
-			<h2 class="card-title">My station</h2>
-			<h3 class="text-lg">Position</h3>
-			<input type="text" class="input w-full max-w-xs" />
-			<h3 class="text-lg">Elevation</h3>
-			<p>-</p>
-			<div class="divider" />
-			<h2 class="card-title">DX station</h2>
-			<h3 class="text-lg">Position</h3>
-			<input type="text" class="input w-full max-w-xs" />
-			<h3 class="text-lg">Elevation</h3>
-			<p>-</p>
-			<h3 class="text-lg">Bearing</h3>
-			<p>-</p>
-			<h3 class="text-lg">Distance</h3>
-			<p>-</p>
-		</div>
+		<button
+			class="absolute left-full top-1/2 -translate-y-1/2 bg-white border-r border-t border-b border-gray-200 rounded-r-lg dark:border-gray-700 dark:bg-gray-800 text-gray-900 dark:text-white p-4 focus:outline-none"
+			@click="stationsDrawerIsOpen = !stationsDrawerIsOpen"
+		>
+			<p
+				:style="{
+					writingMode: 'vertical-lr',
+				}"
+			>
+				Stations
+			</p>
+		</button>
+		<h2 class="mb-4 text-4xl font-bold text-gray-900 dark:text-white">
+			My station
+		</h2>
+		<label
+			for="my-position"
+			class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+			>Position</label
+		>
+		<input
+			type="text"
+			id="my-position"
+			class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+			placeholder="XXYYzz..."
+			required
+		/>
+		<hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+		<h2 class="mb-4 text-4xl font-bold text-gray-900 dark:text-white">
+			DX Station
+		</h2>
+		<label
+			for="dx-position"
+			class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+			>Position</label
+		>
+		<input
+			type="text"
+			id="dx-position"
+			class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+			placeholder="XXYYzz..."
+			required
+		/>
 	</div>
 </template>
 
