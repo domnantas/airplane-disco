@@ -42,9 +42,7 @@ Development server will be available on http://localhost:4220
 
 ### What's the difference between `4220` and `5173` ports?
 
-Great question. `5173` is _Vite_ development server port. `4220` (try to guess
-what's hiding behind those numbers) is _Cloudflare_ dev server port. Cloudflare
-proxies requests to Vite:
+Great question. `5173` (kinda looks like `VITE`) is _Vite_ development server port. `4220` (kinda looks like Airbus `A220`) is _Cloudflare_ dev server port. Cloudflare proxies requests to Vite:
 
 ```
 Your browser -> Cloudflare -> Vite
