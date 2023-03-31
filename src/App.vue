@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import "mapbox-gl/dist/mapbox-gl.css";
-import mapboxgl, { Marker, GeoJSONSource } from "mapbox-gl";
+import mapboxgl, { Marker, GeoJSONSource, LngLat } from "mapbox-gl";
 import { onMounted, ref } from "vue";
 import {
 	circle,
@@ -68,6 +68,9 @@ const getAirplaneCollection = async (
 	);
 };
 
+const transmitterPosition = ref<LngLat>();
+const stationsDrawerIsOpen = ref(true);
+
 onMounted(async () => {
 	mapboxgl.accessToken =
 		"pk.eyJ1IjoiZmlzdG1lbmFydXRvIiwiYSI6ImNsOHJtZzlrZTBucXAzbm4xeDQ1N29lbXcifQ.5DrUh4lgXkHcv6x3hyyTjw";
@@ -108,16 +111,19 @@ onMounted(async () => {
 		});
 	});
 
+	const transmitterMarker = new Marker({
+		draggable: true,
+	}).on("drag", (event) => {
+		transmitterPosition.value = event?.target?.getLngLat();
+	});
+
 	const receiverMarker = new Marker({
 		draggable: true,
 		color: "red",
 	});
 
-	const transmitterMarker = new Marker({
-		draggable: true,
-	});
-
 	map.once("click", (event) => {
+		transmitterPosition.value = event.lngLat;
 		transmitterMarker.setLngLat(event.lngLat).addTo(map);
 
 		map.once("click", async (event) => {
@@ -253,8 +259,6 @@ onMounted(async () => {
 		});
 	});
 });
-
-const stationsDrawerIsOpen = ref(false);
 </script>
 
 <template>
@@ -279,7 +283,7 @@ const stationsDrawerIsOpen = ref(false);
 			</p>
 		</button>
 		<h2 class="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
-			My station
+			TX station
 		</h2>
 		<label
 			for="my-position"
@@ -291,13 +295,13 @@ const stationsDrawerIsOpen = ref(false);
 			id="my-position"
 			class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 			placeholder="XXYYzz..."
-			required
+			:value="transmitterPosition?.toArray()"
 		/>
 
 		<hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
 
 		<h2 class="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
-			DX Station
+			RX Station
 		</h2>
 		<label
 			for="dx-position"
@@ -309,7 +313,6 @@ const stationsDrawerIsOpen = ref(false);
 			id="dx-position"
 			class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 			placeholder="XXYYzz..."
-			required
 		/>
 	</div>
 </template>
