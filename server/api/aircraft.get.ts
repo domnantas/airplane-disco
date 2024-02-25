@@ -23,6 +23,8 @@ export default defineEventHandler(async (event) => {
 
   const { latitude, longitude } = query.data;
 
+  console.log("envs", aircraftScatterApiKey);
+
   const data = await $fetch(
     `https://aircraftscatter.p.rapidapi.com/lat/${latitude}/lon/${longitude}/`,
     {
