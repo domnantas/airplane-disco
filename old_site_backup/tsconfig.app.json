@@ -1,0 +1,20 @@
+{
+	"extends": "@vue/tsconfig/tsconfig.web.json",
+	"include": [
+		"env.d.ts",
+		"old_site_backup/src/**/*",
+		"old_site_backup/src/**/*.vue"
+	],
+	"exclude": ["old_site_backup/src/**/__tests__/*"],
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"lib": ["ESNext", "DOM"],
+		"composite": true,
+		"jsx": "preserve",
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["old_site_backup/src/*"]
+		}
+	}
+}
