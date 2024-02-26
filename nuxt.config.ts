@@ -3,8 +3,7 @@ export default defineNuxtConfig({
   ssr: false,
   modules: ["@nuxtjs/tailwindcss", "shadcn-nuxt"],
   runtimeConfig: {
-    aircraftScatterApiKey: "",
-    apiKey: "",
+    aircraft: "",
   },
   devtools: {
     enabled: true,
