@@ -7,7 +7,7 @@ const coordinatesSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const { aircraftScatter } = useRuntimeConfig(event);
+  const { aircraftScatterApiKey } = useRuntimeConfig(event);
   const query = await getValidatedQuery(event, (query) =>
     coordinatesSchema.safeParse(query),
   );
@@ -23,13 +23,13 @@ export default defineEventHandler(async (event) => {
 
   const { latitude, longitude } = query.data;
 
-  console.log("envs", aircraftScatter);
+  console.log("envs", aircraftScatterApiKey);
 
   const data = await $fetch(
     `https://aircraftscatter.p.rapidapi.com/lat/${latitude}/lon/${longitude}/`,
     {
       headers: {
-        "X-RapidAPI-Key": aircraftScatter,
+        "X-RapidAPI-Key": aircraftScatterApiKey,
         "X-RapidAPI-Host": "aircraftscatter.p.rapidapi.com",
       },
     },
